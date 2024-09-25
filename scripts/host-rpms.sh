@@ -1,11 +1,26 @@
 #!/bin/bash
 
-# Output CSV file: Defaults to STDOUT if not provided as an argument
+# Usage: ./script.sh [output_file] [mode]
+# mode: "container" (default) to run commands via chroot or "host" to run directly
+
+# Get the output file and mode (defaults to container mode)
 output_file=${1:-/dev/stdout}
+mode=${2:-"container"}
+
+# Helper function to run rpm commands either via chroot or directly
+run_rpm_command() {
+  local rpm_command=$1
+  if [[ "$mode" == "container" ]]; then
+    # Running inside a container, use chroot
+    chroot /hostfs /bin/bash -c "$rpm_command"
+  else
+    # Running directly on the host
+    eval "$rpm_command"
+  fi
+}
 
 # Get the list of all installed RPM packages with their sizes in KB
-# rpm_list=$(rpm -qa --qf "%{NAME},%{SIZE}\n") (Non-containerized)
-rpm_list=$(chroot /hostfs /bin/bash -c 'rpm -qa --qf "%{NAME},%{SIZE}\n"')
+rpm_list=$(run_rpm_command 'rpm -qa --qf "%{NAME},%{SIZE}\n"')
 
 # Calculate total size of all installed packages, forcing output to be a plain integer
 total_size=$(echo "$rpm_list" | awk -F, '{sum += $2} END {printf "%.0f", sum}')
