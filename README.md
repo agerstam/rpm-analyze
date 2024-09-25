@@ -50,7 +50,38 @@ The container image runs `run-all.sh` which is a shell script that invokes the f
 - `rpm-deps.sh` which takes in one or more arguments expressed as rpm package names and generates a combined CSV for all rpms.
 - `rpm-plot.py` is a Python script which generates the plot using the CSV data from `host-rpms.sh`
 
-The scripts can be run natively, outside a container but modification should be done to every execution of `rpm` to not run as chroot. Examples and comments added in appropriate places in the shell scripts.
+The scripts can be run natively, outside a container but modification should be done to every execution of `rpm` to not run as chroot. 
+
+host-rpms:
+
+```bash
+./host-rpms [output=/dev/stdout] [mode=host | container]
+
+./host-rpms /dev/stdout host
+
+Package Name,Size (KB),Percentage of Total Size
+libreoffice-core,330092887,4.3700
+firefox,233857107,3.0900
+glibc-all-langpacks,228747891,3.0300
+java-17-openjdk-headless,221441167,2.9300
+...
+```
+
+rpm-deps:
+
+```bash
+./rpm-deps [mode=host | container] [rpm1] [rpm2] ...
+
+./rpm-deps.sh host openssh curl
+Package Name,Package Size (KB),Dependency,Dependency Size (KB)
+openssh,1972540,,
+openssh,,audit-libs-3.1.1-1.fc38.aarch64,560921
+openssh,,openssh-9.0p1-16.fc38.aarch64,1972540
+openssh,,glibc-2.37-4.fc38.aarch64,9985332
+openssh,,glibc-2.37-4.fc38.aarch64,9985332
+openssh,,openssl-libs-3.0.9-1.fc38.aarch64,7350122
+
+```
 
 Note! Running natively will not allow for plots to be generated as Python interpreter as well as dependencies. These could be installed if required locally on the host.
 
