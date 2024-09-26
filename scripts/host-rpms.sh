@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: ./script.sh [output_file] [mode]
+# Usage: ./host-rpms.sh [output_file] [mode]
 # mode: "container" (default) to run commands via chroot or "host" to run directly
 
 # Get the output file and mode (defaults to container mode)
@@ -29,7 +29,7 @@ total_size=$(echo "$rpm_list" | awk -F, '{sum += $2} END {printf "%.0f", sum}')
 total_size=${total_size:-0}
 
 # Write CSV headers
-echo "Package Name,Size (KB),Percentage of Total Size" > "$output_file"
+echo "Package Name,Size,Percentage of Total Size" > "$output_file"
 
 # Check if total_size is zero or missing and warn the user
 if [[ "$total_size" -eq 0 ]]; then

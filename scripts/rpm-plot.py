@@ -20,10 +20,10 @@ if not os.path.exists(output_dir):
 df = pd.read_csv(csv_file)
 
 # Convert package sizes to numeric (in case there are any text issues)
-df["Size (KB)"] = pd.to_numeric(df["Size (KB)"], errors="coerce")
+df["Size"] = pd.to_numeric(df["Size"], errors="coerce")
 
-# Convert the size from KB to MB
-df["Size (MB)"] = df["Size (KB)"] / 1024
+# Convert the size from bytes to MB
+df["Size (MB)"] = df["Size"] / 1024 / 1024
 
 # Sort by package size for better visualization
 df = df.sort_values(by="Size (MB)", ascending=False)

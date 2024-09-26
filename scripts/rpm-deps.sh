@@ -45,7 +45,7 @@ get_package_dependencies() {
 temp_file=$(mktemp)
 
 # Write CSV headers to the temporary file
-echo "Package Name,Package Size (KB),Dependency,Dependency Size (KB)" > "$temp_file"
+echo "Package Name,Package Size,Dependency,Dependency Size" > "$temp_file"
 
 # Process each RPM package passed as an argument
 for pkg in "$@"; do
