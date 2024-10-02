@@ -1,9 +1,0 @@
-Package Name,Package Size (KB),Dependency,Dependency Size (KB)
-curl,906688,,
-curl,,glibc-2.37-4.fc38.aarch64,9985332
-curl,,libcurl-minimal-8.0.1-3.fc38.aarch64,611966
-curl,,zlib-1.2.13-3.fc38.aarch64,306235
-curl,,rpmlib(CompressedFileNames),missing
-curl,,rpmlib(FileDigests),missing
-curl,,rpmlib(PayloadFilesHavePrefix),missing
-curl,,rpmlib(PayloadIsZstd),missing
