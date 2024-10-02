@@ -19,42 +19,16 @@ run_rpm_command() {
   fi
 }
 
-# Get the list of all installed RPM packages with their sizes in KB
-rpm_list=$(run_rpm_command 'rpm -qa --qf "%{NAME},%{SIZE}\n"')
-
-# Calculate total size of all installed packages, forcing output to be a plain integer
-total_size=$(echo "$rpm_list" | awk -F, '{sum += $2} END {printf "%.0f", sum}')
-
-# Ensure total_size is an integer
-total_size=${total_size:-0}
-
 # Write CSV headers
 echo "Package Name,Size,Percentage of Total Size" > "$output_file"
 
-# Check if total_size is zero or missing and warn the user
-if [[ "$total_size" -eq 0 ]]; then
-  echo "Warning: Could not determine the total size of all packages. Percentages will be omitted."
-  
-  # Sort the RPM list by size and write it to the output file without percentage
-  echo "$rpm_list" | sort -t, -k2 -n -r | while IFS=, read -r pkg_name pkg_size; do
-    # Ensure pkg_size is converted to an integer
-    pkg_size=$(echo "$pkg_size" | awk '{printf "%d", $1}')
-    # Print package name and size to CSV (without percentage)
-    echo "$pkg_name,$pkg_size," >> "$output_file"
-  done
-else
-  # Process each package to calculate its percentage contribution to the total size
-  echo "$rpm_list" | sort -t, -k2 -n -r | while IFS=, read -r pkg_name pkg_size; do
-    # Ensure the package size is a valid integer
-    if [[ -n "$pkg_size" && "$pkg_size" -gt 0 ]]; then
-      # Convert pkg_size to an integer to avoid scientific notation issues
-      pkg_size=$(echo "$pkg_size" | awk '{printf "%d", $1}')
+# Step 1: Calculate the total size of all installed RPMs in bytes
+total_rpm_size=$(run_rpm_command 'rpm -qa --qf "%{SIZE}\n" | paste -sd+ - | bc')
 
-      # Use awk to calculate the percentage with 6 significant digits and format it
-      formatted_percentage=$(awk -v size="$pkg_size" -v total="$total_size" 'BEGIN {printf "%.6f", (size / total) * 100}')
-
-      # Print package name, size, and percentage to CSV
-      echo "$pkg_name,$pkg_size,$formatted_percentage" >> "$output_file"
-    fi
-  done
-fi
+# Step 2: Get a list of all RPMs with their size in bytes, and sort by size
+run_rpm_command 'rpm -qa --qf "%{NAME},%{SIZE}\n"' | sort -t',' -k2,2nr | while IFS=',' read -r name size; do
+    # Calculate the percentage of total RPM size   taken up by each package
+    percentage=$(echo "scale=6; ($size / $total_rpm_size) * 100" | bc)
+    # Output the package name, size in bytes, and percentage in CSV format
+    echo "$name,$size,$percentage" >> "$output_file"
+done

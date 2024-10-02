@@ -20,7 +20,13 @@ echo "Running host-rpms.sh to generate CSV for all host rpms..."
 echo "CSV for all RPMs saved to $OUTPUT_DIR/host-rpms.csv"
 
 echo "Running rpm-deps.sh [container | host] [rpm1] [rpm2] ... [rpm(n)] to generate CSV for key rpm packages..."
-./rpm-deps.sh container curl openssh > $OUTPUT_DIR/agent-rpms.csv
+./rpm-deps.sh host \
+  hardware-discovery-agent \
+  cluster-agent node-agent \
+  platform-observability-agent \
+  platform-telemetry-agent \
+  platform-update-agent > $OUTPUT_DIR/agent-rpms.csv
+
 echo "CSV for key rpm packages saved to $OUTPUT_DIR/agent-rpms.csv"
 
 echo "Running rpm-plot.py to generate the plot..."

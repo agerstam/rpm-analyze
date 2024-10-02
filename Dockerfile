@@ -1,14 +1,15 @@
 # Use a smaller Python image as the base
 FROM python:3.9-slim
 
-# Install necessary packages (rpm, bash, and any other dependencies)
+# Install necessary packages (rpm, bash, gnupg2, dirmngr)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     rpm \
     bash \
     gnupg2 \
     dirmngr \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* 
+    bc \ 
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip install pandas matplotlib
