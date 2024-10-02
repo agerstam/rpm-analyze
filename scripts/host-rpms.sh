@@ -50,11 +50,8 @@ else
       # Convert pkg_size to an integer to avoid scientific notation issues
       pkg_size=$(echo "$pkg_size" | awk '{printf "%d", $1}')
 
-      # Calculate the percentage of total size using integer math (multiply to avoid float division)
-      percentage=$(( pkg_size * 10000 / total_size ))
-
-      # Format the percentage as floating-point with 4 decimal places using printf
-      formatted_percentage=$(printf "%.4f" "$(echo "$percentage / 100" | awk '{printf "%.4f", $1/100}')")
+      # Use awk to calculate the percentage with 6 significant digits and format it
+      formatted_percentage=$(awk -v size="$pkg_size" -v total="$total_size" 'BEGIN {printf "%.6f", (size / total) * 100}')
 
       # Print package name, size, and percentage to CSV
       echo "$pkg_name,$pkg_size,$formatted_percentage" >> "$output_file"
