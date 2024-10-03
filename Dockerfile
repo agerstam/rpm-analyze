@@ -9,6 +9,8 @@ RUN apt-get update && \
     gnupg2 \
     dirmngr \
     bc \ 
+    curl \
+    jq \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -22,6 +24,7 @@ COPY scripts/host-rpms.sh /usr/src/app/host-rpms.sh
 COPY scripts/rpm-deps.sh /usr/src/app/rpm-deps.sh
 COPY scripts/rpm-plot.py /usr/src/app/rpm-plot.py
 COPY scripts/run-all.sh /usr/src/app/run-all.sh
+COPY scripts/scan-rpms.sh /usr/src/app/scan-rpms.sh
 
 # Ensure scripts are executable
 RUN chmod +x /usr/src/app/*.sh

@@ -49,8 +49,9 @@ The container image runs `run-all.sh` which is a shell script that invokes the f
 - `host-rpms.sh` which enumerates and creates the CSV for all host rpms
 - `rpm-deps.sh` which takes in one or more arguments expressed as rpm package names and generates a combined CSV for all rpms.
 - `rpm-plot.py` is a Python script which generates the plot using the CSV data from `host-rpms.sh`
+- `scan-rpms.sh` saves all known CVEs for rpms installed on the system by querying [Open Source Vulnerability](https://osv.dev/) APIs.
 
-The scripts can be run natively, outside a container but modification should be done to every execution of `rpm` to not run as chroot. 
+The scripts can be run natively, outside a container but modification should be done to every execution of `rpm` to not run as chroot.
 
 host-rpms:
 
@@ -73,7 +74,7 @@ rpm-deps:
 ./rpm-deps [mode=host | container] [rpm1] [rpm2] ...
 
 ./rpm-deps.sh host openssh curl
-Package Name,Package Size (KB),Dependency,Dependency Size (KB)
+Package Name,Package Size,Dependency,Dependency Size
 openssh,1972540,,
 openssh,,audit-libs-3.1.1-1.fc38.aarch64,560921
 openssh,,openssh-9.0p1-16.fc38.aarch64,1972540
@@ -81,6 +82,21 @@ openssh,,glibc-2.37-4.fc38.aarch64,9985332
 openssh,,glibc-2.37-4.fc38.aarch64,9985332
 openssh,,openssl-libs-3.0.9-1.fc38.aarch64,7350122
 
+```
+
+scan-rpms:
+
+```bash
+./scan-rpms [mode=host | container] <directory>
+
+./scan-rpms.sh host CVEs
+No vulnerabilities found for plymouth-graphics
+No vulnerabilities found for libiscsi-1.19.0
+No vulnerabilities found for usbredir-0.13.0
+No vulnerabilities found for woff2-1.0.2
+No vulnerabilities found for xkbcomp-1.4.6
+Saved response to /usr/src/app/output/CVEs/file-5.44.json
+No vulnerabilities found for libsndfile-1.1.0
 ```
 
 Note! Running natively will not allow for plots to be generated as Python interpreter as well as dependencies. These could be installed if required locally on the host.
